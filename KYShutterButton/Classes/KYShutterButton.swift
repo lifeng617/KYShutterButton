@@ -100,12 +100,30 @@ open class KYShutterButton: UIButton {
                 animation.toValue = _circlePath.cgPath
                 _circleLayer.add(animation, forKey: "path-anim")
                 _circleLayer.path = _circlePath.cgPath
+                
+                if let textLayer = self.titleLabel?.layer {
+                    let fade = CABasicAnimation(keyPath: "opacity")
+                    fade.fromValue = textLayer.opacity
+                    fade.toValue = 1
+                    fade.duration = 0.15
+                    textLayer.add(fade, forKey: "opacity-anim")
+                    textLayer.opacity = 1
+                }
             case .recording:
                 animation.toValue = _roundRectPath.cgPath
                 _circleLayer.add(animation, forKey: "path-anim")
                 _circleLayer.path = _roundRectPath.cgPath
                 if shutterType == .timeLapse {
                     p_addTimeLapseAnimations()
+                }
+                
+                if let textLayer = self.titleLabel?.layer {
+                    let fade = CABasicAnimation(keyPath: "opacity")
+                    fade.fromValue = textLayer.opacity
+                    fade.toValue = 0
+                    fade.duration = 0.15
+                    textLayer.add(fade, forKey: "opacity-anim")
+                    textLayer.opacity = 0
                 }
             }
         }
@@ -303,6 +321,10 @@ open class KYShutterButton: UIButton {
             }
         }
         
+        if let label = self.titleLabel {
+            self.bringSubview(toFront: label)
+        }
+        
         if shutterType == .timeLapse && buttonState == .recording {
             p_removeTimeLapseAnimations()
             p_addTimeLapseAnimations()
@@ -313,7 +335,7 @@ open class KYShutterButton: UIButton {
     
     @objc
     open override func setTitle(_ title: String?, for state: UIControlState) {
-        super.setTitle("", for: state)
+        super.setTitle(title, for: state)
     }
     
     /**************************************************************************/
